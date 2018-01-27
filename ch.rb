@@ -2,32 +2,46 @@ require 'sinatra'
 require 'rmagick'
 require 'matrix'
 
+get '/' do
+  status 405
+  '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Circle Histogram</title></head><body><code>curl -X PUT -d @myfilename http://circlehistogram.herokuapp.com</code> or <form method="POST" action="" enctype="multipart/form-data"><input type="file" name="file" /><input type="submit" /></form></body></html>'
+end
+
 post '/' do
+  img=Magick::Image.from_blob(params[:file][:tempfile].read).first
+  circle_histogram img
+end
+
+put '/' do
+  img=Magick::Image.from_blob(request.body.read).first
+  circle_histogram img
+end
+
+def circle_histogram img
   content_type 'image/png'
   histogram=[[0]*256,[0]*256,[0]*256]
-  Q=Magick::QuantumRange/255
-  img=Magick::Image.from_blob(request.body.read).first
+  q=Magick::QuantumRange/255
   img.each_pixel do |pixel, c, r|
-    histogram[0][pixel.red/Q]+=1
-    histogram[1][pixel.green/Q]+=1
-    histogram[2][pixel.blue/Q]+=1
+    histogram[0][pixel.red/q]+=1
+    histogram[1][pixel.green/q]+=1
+    histogram[2][pixel.blue/q]+=1
   end
 
-  ANGLE=2.0*Math::PI/histogram[0].size
-  ANGLE2=ANGLE/2.0
-  TG=Math.tan ANGLE2
-  MAX=histogram.reduce(0){|l,a| [a.max, l].max}
-  L=[511,MAX].min
-  PROP=1.0*L/MAX
+  angle1=2.0*Math::PI/histogram[0].size
+  angle2=angle1/2.0
+  tg=Math.tan angle2
+  max=histogram.reduce(0){|l,a| [a.max, l].max}
+  l=[511,max].min
+  prop=1.0*l/max
 
   channels=[]
-  alpha=Magick::Image.new(L*2+1,L*2+1) do |i|
+  alpha=Magick::Image.new(l*2+1,l*2+1) do |i|
     i.format='PNG'
     i.background_color = '#000000'
   end
   
   histogram.each do |values|
-    canvas = Magick::Image.new L*2+1,L*2+1 do |i|
+    canvas = Magick::Image.new l*2+1,l*2+1 do |i|
       i.format='PNG'
       i.background_color = '#00000000'
     end
@@ -36,12 +50,12 @@ post '/' do
       path = Magick::Draw.new
       path.fill color
       path.stroke color
-      angle = ANGLE*i
+      angle = angle1*i
       transform = Matrix[[Math.cos(angle), -Math.sin(angle)],[Math.sin(angle), Math.cos(angle)]]
-      value*=PROP
-      points = Matrix[[0,value,value],[0,value*TG,-value*TG]]
+      value*=prop
+      points = Matrix[[0,value,value],[0,value*tg,-value*tg]]
       points = transform*points
-      points += Matrix[[L,L,L],[L,L,L]]
+      points += Matrix[[l,l,l],[l,l,l]]
       path.polygon(points[0,0],points[1,0],points[0,1],points[1,1],points[0,2],points[1,2])
       path.draw canvas
     end
@@ -50,7 +64,7 @@ post '/' do
     alpha.composite!(talpha.negate,0,0,Magick::LightenCompositeOp)
   end
   channels << alpha
-  img = Magick::Image.new L*2+1,L*2+1 do |i|
+  img = Magick::Image.new l*2+1,l*2+1 do |i|
     i.format='PNG'
     i.background_color = '#00000000'
   end
