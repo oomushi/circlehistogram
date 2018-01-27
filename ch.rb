@@ -4,7 +4,7 @@ require 'matrix'
 
 get '/' do
   status 405
-  '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Circle Histogram</title></head><body><code>curl -X PUT -d @myfilename http://circlehistogram.herokuapp.com</code> or <form method="POST" action="" enctype="multipart/form-data"><input type="file" name="file" /><input type="submit" /></form></body></html>'
+  '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Circle Histogram</title></head><body><code>curl -X PUT -d @myfilename https://circlehisto.herokuapp.com</code> or <form method="POST" action="" enctype="multipart/form-data"><input type="file" name="file" /><input type="submit" /></form></body></html>'
 end
 
 post '/' do
