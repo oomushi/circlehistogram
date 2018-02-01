@@ -3,7 +3,7 @@ require './histogram'
 
 get '/' do
   status 405
-  '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Circle Histogram</title></head><body><code>curl -X PUT -d @myfilename https://circlehisto.herokuapp.com</code> or <form method="POST" action="" enctype="multipart/form-data"><input type="file" name="file" /><input type="submit" /></form></body></html>'
+  send_file File.join(settings.public_folder, 'index.html')
 end
 
 get '/version' do
