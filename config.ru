@@ -1,2 +1,2 @@
-require './ch'
+require './routes'
 run Sinatra::Application
