@@ -33,7 +33,7 @@ def circle_histogram img
       path = Magick::Draw.new
       path.fill color
       path.stroke color
-      angle = angle1*i
+      angle = -angle1*i
       transform = Matrix[[Math.cos(angle), -Math.sin(angle)],[Math.sin(angle), Math.cos(angle)]]
       value*=prop
       points = Matrix[[0,value,value],[0,value*tg,-value*tg]]
