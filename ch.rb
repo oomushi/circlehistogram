@@ -12,11 +12,6 @@ get '/version' do
   '{"version": "0.3.0"}'
 end
 
-get '/favicon.ico' do
-  content_type 'image/x-icon'
-  send_file  'favicon.ico'
-end
-
 post '/' do
   img=Magick::Image.from_blob(params[:file][:tempfile].read).first
   headers['Content-Disposition'] = 'attachment; filename="response.png"'
