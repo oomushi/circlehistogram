@@ -12,14 +12,22 @@ get '/version' do
 end
 
 post '/' do
-  img=Magick::Image.from_blob(params[:file][:tempfile].read).first
-  headers['Content-Disposition'] = 'attachment; filename="response.png"'
-  content_type 'image/png'
-  circle_histogram img
+  begin
+    img=Magick::Image.from_blob(params[:file][:tempfile].read).first
+    headers['Content-Disposition'] = 'attachment; filename="response.png"'
+    content_type 'image/png'
+    circle_histogram img
+  rescue
+    status 400
+  end
 end
 
 put '/' do
-  img=Magick::Image.from_blob(request.body.read).first
-  content_type 'image/png'
-  circle_histogram img
+  begin
+    img=Magick::Image.from_blob(request.body.read).first
+    content_type 'image/png'
+    circle_histogram img
+  rescue
+    status 400
+  end
 end
