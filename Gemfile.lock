@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     mustermann (1.0.1)
-    rack (2.0.3)
+    rack (2.0.4)
     rack-protection (2.0.0)
       rack
     rmagick (2.16.0)
@@ -21,4 +21,4 @@ DEPENDENCIES
   sinatra
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
